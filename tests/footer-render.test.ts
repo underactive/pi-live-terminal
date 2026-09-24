@@ -10,17 +10,42 @@ const hintSets = [
   {
     name: "widget footer",
     hints: [
-      style(" ctrl+shift+f ") + style("focus"),
-      style(" ctrl+shift+x ") + style("kill"),
-      style(" ctrl+shift+v ") + style("detach"),
+      style(" cmd+option+f ") + style("focus"),
+      style(" cmd+option+x ") + style("kill"),
+      style(" cmd+option+v ") + style("detach"),
+      style(" cmd+option+s ") + style("switch (2)"),
+      style(" cmd+option+m ") + style("collapse"),
     ].join(style(" · ")),
   },
   {
-    name: "focus modal footer",
+    name: "collapsed widget footer",
     hints: [
-      style(" ctrl+shift+f ") + style("close focus"),
-      style("scroll wheel scrolls output"),
+      style(" cmd+option+m ") + style("expand"),
+      style(" cmd+option+f ") + style("focus"),
+    ].join(style(" · ")),
+  },
+  {
+    name: "focus modal footer with fallback exit chord",
+    hints: [
+      style(" cmd+option+f ") + style("or ") + style("ctrl+] ×2 ") + style("close focus"),
+      style(" shift+↑↓/PgUp/PgDn ") + style("scroll"),
+      style(" cmd+option+c ") + style("copy"),
       style("input is sent to tmux"),
+    ].join(style(" · ")),
+  },
+  {
+    name: "live scroll indicator footer",
+    hints: [
+      style(" LIVE "),
+      style(" cmd+option+pageUp ") + style("scroll"),
+    ].join(style(" · ")),
+  },
+  {
+    name: "scrolled output indicator footer",
+    hints: [
+      style(" ↑ 128 lines "),
+      style(" cmd+option+end ") + style("follow"),
+      style(" cmd+option+pageDown ") + style("scroll"),
     ].join(style(" · ")),
   },
 ];
@@ -44,6 +69,15 @@ test("narrow footer keeps hints right-justified after a bottom border rule", () 
 
   assert.match(line, /^╰─/);
   assert.match(line, /─╯$/);
+});
+
+test("focus footer includes the fallback and prioritizes exit controls", () => {
+  const focusHints = hintSets.find(({ name }) => name === "focus modal footer with fallback exit chord");
+  assert.ok(focusHints);
+  assert.match(focusHints.hints, /ctrl\+\]/);
+
+  const line = renderFooterLine(20, focusHints.hints, border);
+  assert.match(line, /cmd\+option\+f/);
 });
 
 test("footer keeps unpadded hints adjacent to the right rule", () => {
