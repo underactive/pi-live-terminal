@@ -14,13 +14,14 @@ const hintSets = [
       style(" cmd+option+x ") + style("kill"),
       style(" cmd+option+v ") + style("detach"),
       style(" cmd+option+s ") + style("switch (2)"),
-      style(" cmd+option+m ") + style("collapse"),
+      style(" cmd+option+=/- ") + style("resize"),
+      style(" cmd+option+t ") + style("collapse"),
     ].join(style(" · ")),
   },
   {
     name: "collapsed widget footer",
     hints: [
-      style(" cmd+option+m ") + style("expand"),
+      style(" cmd+option+t ") + style("expand"),
       style(" cmd+option+f ") + style("focus"),
     ].join(style(" · ")),
   },

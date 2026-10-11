@@ -14,6 +14,7 @@ const FOCUS_CAPTURE_LINES = 1000;
 const VISIBLE_LINES = 16;
 const MIN_WIDGET_LINES = 6;
 const WIDGET_HEIGHT_RATIO = 0.4;
+const HEIGHT_STEP_LINES = 2;
 const POLL_MS = 500;
 const EXIT_MONITOR_MS = 1000;
 const DEFAULT_WAIT_TIMEOUT_MS = 30_000;
@@ -1231,6 +1232,14 @@ class LiveTerminalWidget extends PaneView {
     return widgetCollapsed ? 0 : clampWidgetHeight(this.tui.terminal.rows, widgetHeightOverride);
   }
 
+  /** Grows or shrinks the widget from its current rendered height; the next render reclamps to the terminal size. */
+  adjustHeight(delta: number): void {
+    if (widgetCollapsed) return;
+    const current = clampWidgetHeight(this.tui.terminal.rows, widgetHeightOverride);
+    widgetHeightOverride = Math.max(MIN_WIDGET_LINES, current + delta);
+    this.invalidateSize();
+  }
+
   protected borderRole(): BorderRole {
     return "border";
   }
@@ -1252,7 +1261,7 @@ class LiveTerminalWidget extends PaneView {
     if (indicator) hints.push(th.fg(indicator === "LIVE" ? "success" : "warning", ` ${indicator} `));
 
     if (widgetCollapsed) {
-      hints.push(key(" cmd+option+m ") + dim("expand"), key(" cmd+option+f ") + dim("focus"));
+      hints.push(key(" cmd+option+t ") + dim("expand"), key(" cmd+option+f ") + dim("focus"));
       return hints;
     }
 
@@ -1263,7 +1272,7 @@ class LiveTerminalWidget extends PaneView {
       hints.push(key(" cmd+option+x ") + dim("kill"), key(" cmd+option+v ") + dim("detach"));
     }
     if (attachments.size > 1) hints.push(key(" cmd+option+s ") + dim(`switch (${attachments.size})`));
-    hints.push(key(" cmd+option+m ") + dim("collapse"));
+    hints.push(key(" cmd+option+=/- ") + dim("resize"), key(" cmd+option+t ") + dim("collapse"));
     return hints;
   }
 
@@ -1947,9 +1956,19 @@ tmux set-option -p -t "$TMUX_PANE" @pi_tmux_run_status "$status" 2>/dev/null || 
     handler: (ctx) => pickAttachment(ctx),
   });
 
-  pi.registerShortcut(Key.superAlt("m"), {
+  pi.registerShortcut(Key.superAlt("t"), {
     description: "Collapse or expand the live terminal widget",
     handler: (ctx) => toggleCollapsed(ctx),
+  });
+
+  pi.registerShortcut(Key.superAlt("="), {
+    description: "Grow the live terminal widget height",
+    handler: () => activeWidget?.adjustHeight(HEIGHT_STEP_LINES),
+  });
+
+  pi.registerShortcut(Key.superAlt("-"), {
+    description: "Shrink the live terminal widget height",
+    handler: () => activeWidget?.adjustHeight(-HEIGHT_STEP_LINES),
   });
 
   pi.registerShortcut(Key.superAlt("pageUp"), {

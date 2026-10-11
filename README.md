@@ -44,8 +44,8 @@ live_terminal_close({ kill: false })
 | Open the focus modal | `/live-terminal:focus` | `cmd+option+f` toggles it |
 | Detach and leave tmux running | `/live-terminal:detach` | `cmd+option+v` |
 | Close, optionally requesting a kill | `/live-terminal:close [--kill]` | `cmd+option+x` requests a kill |
-| Collapse or expand the widget | `/live-terminal:toggle` | `cmd+option+m` |
-| Set the session-scoped widget height | `/live-terminal:height <rows>` | — |
+| Collapse or expand the widget | `/live-terminal:toggle` | `cmd+option+t` |
+| Set the session-scoped widget height | `/live-terminal:height <rows>` | `cmd+option+=`, `cmd+option+-` |
 | Copy recent pane output | `/live-terminal:copy [lines]` | `cmd+option+c` in the focus modal |
 | Send text to the pane | `/live-terminal:send <text>` | — |
 | Scroll the widget | — | `cmd+option+pageUp`, `cmd+option+pageDown` |
@@ -71,7 +71,7 @@ The active session also appears in Pi's status area, including while the widget 
 
 ## Widget controls
 
-The widget adapts its height to the Pi terminal. `/live-terminal:height <rows>` sets an override for the current Pi session, clamped to a six-row floor and a 40% terminal-height ceiling. `cmd+option+m` or `/live-terminal:toggle` collapses the widget to its title and footer.
+The widget adapts its height to the Pi terminal. `/live-terminal:height <rows>` sets an override for the current Pi session, clamped to a six-row floor and a 40% terminal-height ceiling. `cmd+option+=` and `cmd+option+-` grow and shrink it two rows at a time within the same bounds. `cmd+option+t` or `/live-terminal:toggle` collapses the widget to its title and footer.
 
 Use `cmd+option+pageUp` and `cmd+option+pageDown` to inspect scrollback; the mouse wheel also works when Pi routes pointer input to the widget. Scrolling up pauses automatic following and shows `↑ N lines`; `cmd+option+end` returns to `LIVE` output. The title shows elapsed time while running and the exit status after completion.
 
